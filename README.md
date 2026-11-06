@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 💖 Romantic Birthday Surprise Website
 
 A magical, interactive single-page romantic birthday journey built with React, Vite, Tailwind CSS, and Framer Motion. 
@@ -128,3 +129,6 @@ Supported formats: `.mp3` (recommended bitrate 128kbps - 192kbps).
 
 Your girlfriend will receive a live, fast HTTPS link that works smoothly on iPhone, Android, tablets, and desktop!
 
+=======
+# birthday-surprise
+>>>>>>> b9410f6eec193409468349f842fc7baf9ca95479
