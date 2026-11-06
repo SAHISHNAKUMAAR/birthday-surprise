@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, Music, Play, Pause } from 'lucide-react';
+import { Volume2, VolumeX, Music } from 'lucide-react';
 import { romanticContent } from '../data/content';
 
 export default function MusicPlayer({ hasInteracted }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(0.6);
+  const [volume, setVolume] = useState(0.7);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
 
   const audioRef = useRef(null);
@@ -16,34 +16,43 @@ export default function MusicPlayer({ hasInteracted }) {
   const rawPath = romanticContent.audio?.audioPath || 'music/romantic.mp3';
   const audioSrc = `${cleanBase}${rawPath.replace(/^\//, '')}`;
 
-  // Start playback when user first interacts with the page
-  useEffect(() => {
-    if (hasInteracted && !isPlaying && audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume;
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlaying(true))
-          .catch((err) => {
-            console.warn("Autoplay was prevented by browser. Click play to listen:", err);
-          });
-      }
-    }
-  }, [hasInteracted]);
-
-  const togglePlay = () => {
+  const attemptPlay = () => {
     if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.volume = isMuted ? 0 : volume;
-      audioRef.current
-        .play()
+    audioRef.current.volume = isMuted ? 0 : volume;
+    const playPromise = audioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise
         .then(() => setIsPlaying(true))
-        .catch((err) => console.warn("Audio playback error:", err));
+        .catch(() => {
+          // Modern browsers block autoplay without user interaction
+          // Interaction listeners below will immediately trigger playback
+        });
     }
   };
+
+  // 1. Try to autoplay immediately on mount
+  // 2. Attach global user interaction listeners to bypass browser autoplay blocks instantly
+  useEffect(() => {
+    attemptPlay();
+
+    const startAudioOnGesture = () => {
+      attemptPlay();
+    };
+
+    const events = ['click', 'touchstart', 'pointerdown', 'keydown', 'scroll'];
+    events.forEach((evt) => window.addEventListener(evt, startAudioOnGesture, { passive: true }));
+
+    return () => {
+      events.forEach((evt) => window.removeEventListener(evt, startAudioOnGesture));
+    };
+  }, []);
+
+  // Also trigger when parent App detects any interaction
+  useEffect(() => {
+    if (hasInteracted) {
+      attemptPlay();
+    }
+  }, [hasInteracted]);
 
   const toggleMute = () => {
     if (!audioRef.current) return;
@@ -67,39 +76,28 @@ export default function MusicPlayer({ hasInteracted }) {
 
   return (
     <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-      {/* HTML Audio element loading solely public/music/romantic.mp3 */}
+      {/* HTML Audio element - loops automatically without pause/play button */}
       <audio
         ref={audioRef}
         src={audioSrc}
+        autoPlay
         loop
         preload="auto"
         onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
       />
 
-      {/* Music Controller Glass Pill */}
+      {/* Music Pill Indicator (No pause or play button) */}
       <div className="glass-panel px-3 py-2 rounded-full flex items-center gap-2.5 shadow-lg border border-pink-200/60 transition-all duration-300 hover:shadow-pink-300/30">
-        <button
-          onClick={togglePlay}
-          aria-label={isPlaying ? "Pause music" : "Play music"}
-          className="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-500 to-pink-400 text-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform"
-        >
-          {isPlaying ? (
-            <Pause className="w-3.5 h-3.5 fill-current" />
-          ) : (
-            <Play className="w-3.5 h-3.5 ml-0.5 fill-current" />
-          )}
-        </button>
+        <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-rose-500 to-pink-400 text-white flex items-center justify-center shadow-sm">
+          <Music className={`w-3.5 h-3.5 ${isPlaying ? 'animate-sway' : ''}`} />
+        </div>
 
-        <div className="hidden sm:flex flex-col text-left pr-1 max-w-[150px]">
-          <span className="text-xs font-semibold text-rose-900 tracking-tight flex items-center gap-1 truncate">
-            <Music className={`w-3 h-3 text-rose-500 shrink-0 ${isPlaying ? 'animate-sway' : ''}`} />
-            <span className="truncate">
-              {romanticContent.personal?.favoriteSongTitle || "Our Romantic Song"}
-            </span>
+        <div className="hidden sm:flex flex-col text-left pr-1 max-w-[140px]">
+          <span className="text-xs font-semibold text-rose-900 tracking-tight truncate">
+            {romanticContent.personal?.favoriteSongTitle || "Romantic Song"}
           </span>
           <span className="text-[10px] text-rose-500/80 font-medium">
-            {isPlaying ? "Playing Romantic Song 🎵" : "Paused"}
+            {isPlaying ? "Playing with love 💖" : "Starting music ✨"}
           </span>
         </div>
 
@@ -108,7 +106,7 @@ export default function MusicPlayer({ hasInteracted }) {
           <button
             onClick={toggleMute}
             onMouseEnter={() => setShowVolumeSlider(true)}
-            aria-label={isMuted ? "Unmute" : "Mute"}
+            aria-label={isMuted ? "Unmute audio" : "Mute audio"}
             className="p-1.5 rounded-full hover:bg-rose-100/60 text-rose-700 transition-colors"
           >
             {isMuted || volume === 0 ? (
