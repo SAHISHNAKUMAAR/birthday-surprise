@@ -10,7 +10,7 @@
 export const romanticContent = {
   // --- Personal Details ---
   personal: {
-    girlfriendName: "Asvika",
+    girlfriendName: "AsvikaSahishnakumaar",
     girlfriendNickname: "My Sweet Sunshine",
     senderName: "Sahishnakumaar",
     birthdayDate: "November 6th",
@@ -195,9 +195,7 @@ export const romanticContent = {
 
   // --- Background Music Settings ---
   audio: {
-    audioPath: "/music/romantic.mp3",
-    fallbackEnabled: true,
-    placeholderNotice: "To play your custom song, place 'romantic.mp3' in the public/music folder.",
+    audioPath: "music/romantic.mp3",
   }
 };
 
