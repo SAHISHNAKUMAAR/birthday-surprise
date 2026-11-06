@@ -72,7 +72,7 @@ export const romanticContent = {
         id: 3,
         question: "Ennaku enna kettu alugum kulandahi aguva ?",
         options: [
-          "boobie",
+          "boobies",
           "butt",
           "kannam",
           "kai"
@@ -82,19 +82,19 @@ export const romanticContent = {
       },
       {
         id: 4,
-        question: "What is our signature midnight craving comfort snack?",
+        question: "Namaku ethu craving comfort snack?",
         options: [
-          "Wafle & ice cream 🍪🍨",
+          "Waffle & ice cream 🍪🍨",
           "Extra cheesy pizza slices at 1 AM 🍕",
           "Spicy noodles while binge-watching our favorite show 🍜",
           "Strawberries dipped in sweet melted chocolate 🍓"
         ],
         correctIndex: 0,
-        sweetFeedback: "Mmm yes! Nothing beats sweet treats and cuddling with you late at night! 🍦"
+        sweetFeedback: "Mmm yes! Nothing beats sweet treats and cuddling ! 🍦"
       },
       {
         id: 5,
-        question: "If we could teleport anywhere together right now, where would we go?",
+        question: "Namba nala teleport panna mudinja, where would we go?",
         options: [
           "A quiet wooden cabin overlooking snowy mountains 🏔️",
           "A dreamy beach villa listening to the ocean waves 🌅",
@@ -137,7 +137,7 @@ export const romanticContent = {
       {
         id: 1,
         question: "Ennaku intha world yaru per alagu ?",
-        acceptableAnswers: ["sahi", "sahipapa", "asvi", "kutty", "kuttypapa","nan","Nan"],
+        acceptableAnswers: ["sahi", "sahipapa", "asvi", "kutty", "kuttypapa", "nan", "Nan"],
         hint: "Na unna en peru vechu kupduva ____papa ❤️",
         revealedLetter: "L"
       },
